@@ -1,0 +1,24 @@
+{
+	"nodes":[
+		{"id":"home","type":"file","file":"00_Главная.md","x":680,"y":0,"width":380,"height":220},
+		{"id":"scenario","type":"file","file":"01_Процесс/07_Сценарии обработки.md","x":80,"y":650,"width":380,"height":220},
+		{"id":"roles","type":"file","file":"02_Справочники/01_Роли и ответственность.md","x":560,"y":330,"width":380,"height":220},
+		{"id":"docs","type":"file","file":"02_Справочники/03_Документы.md","x":560,"y":650,"width":380,"height":220},
+		{"id":"kpi","type":"file","file":"03_Управление/01_KPI.md","x":1040,"y":330,"width":380,"height":220},
+		{"id":"risks","type":"file","file":"03_Управление/06_Реестр рисков.md","x":1040,"y":650,"width":380,"height":220},
+		{"id":"example","type":"file","file":"05_Примеры/01_Сквозной пример заказа.md","x":1520,"y":490,"width":380,"height":220},
+		{"id":"ai","type":"file","file":"04_AI/01_Применение ИИ.md","x":1520,"y":810,"width":380,"height":220},
+		{"id":"process","type":"file","file":"01_Процесс/01_Карта процесса.md","x":80,"y":330,"width":380,"height":220}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"home","fromSide":"bottom","toNode":"process","toSide":"top","label":"основной процесс"},
+		{"id":"e2","fromNode":"process","fromSide":"bottom","toNode":"scenario","toSide":"top","label":"сценарии"},
+		{"id":"e3","fromNode":"home","fromSide":"bottom","toNode":"roles","toSide":"top","label":"роли"},
+		{"id":"e4","fromNode":"roles","fromSide":"bottom","toNode":"docs","toSide":"top","label":"документы"},
+		{"id":"e5","fromNode":"home","fromSide":"bottom","toNode":"kpi","toSide":"top","label":"управление"},
+		{"id":"e6","fromNode":"kpi","fromSide":"bottom","toNode":"risks","toSide":"top","label":"контроль"},
+		{"id":"e7","fromNode":"scenario","fromSide":"right","toNode":"example","toSide":"left","label":"пример"},
+		{"id":"e8","fromNode":"risks","fromSide":"right","toNode":"example","toSide":"left","label":"проверка"},
+		{"id":"e9","fromNode":"example","fromSide":"bottom","toNode":"ai","toSide":"top","label":"использование ИИ"}
+	]
+}

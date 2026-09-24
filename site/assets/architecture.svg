@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" role="img" aria-labelledby="t d">
+<title id="t">Архитектура АмурТранс Контроль</title>
+<desc id="d">GitHub Pages предоставляет документацию. Telegram-бот на Vercel вызывает серверные правила заказа и постоянную базу данных. Через Vercel AI Gateway языковая модель помогает разобрать текст, но результат проверяет сервер.</desc>
+<rect width="1000" height="400" rx="18" fill="#eaf1ec"/>
+<g font-family="Arial,sans-serif">
+<text x="28" y="38" font-size="15" font-weight="700" fill="#23332f">Компоненты и обмен данными</text>
+<text x="28" y="61" font-size="11" fill="#63716a">Модель интерпретирует сообщения; сервер проверяет и выполняет операции</text>
+<rect x="25" y="100" width="190" height="120" rx="11" fill="#fff" stroke="#bfd3c5"/>
+<text x="42" y="126" font-size="10" font-weight="700" letter-spacing="1" fill="#c6844d">БАЗА ЗНАНИЙ</text><text x="42" y="158" font-size="17" font-weight="700" fill="#205f53">GitHub Pages</text><text x="42" y="182" font-size="11" fill="#63716a">Wiki и архитектура</text><text x="42" y="200" font-size="10" fill="#63716a">статический сайт</text>
+<rect x="25" y="253" width="190" height="104" rx="11" fill="#fff" stroke="#bfd3c5"/>
+<text x="42" y="279" font-size="10" font-weight="700" letter-spacing="1" fill="#c6844d">ПОЛЬЗОВАТЕЛИ</text><text x="42" y="310" font-size="14" font-weight="700" fill="#205f53">Клиент · сотрудник</text><text x="42" y="333" font-size="11" fill="#63716a">Сообщения в Telegram</text>
+<rect x="275" y="170" width="170" height="115" rx="11" fill="#fff" stroke="#bfd3c5"/>
+<text x="293" y="198" font-size="10" font-weight="700" letter-spacing="1" fill="#c6844d">КАНАЛ</text><text x="293" y="230" font-size="17" font-weight="700" fill="#205f53">Telegram-бот</text><text x="293" y="254" font-size="11" fill="#63716a">диалог и подтверждение</text>
+<rect x="490" y="116" width="260" height="194" rx="11" fill="#fff" stroke="#205f53" stroke-width="2"/>
+<text x="510" y="145" font-size="9" font-weight="700" letter-spacing=".6" fill="#c6844d">СЕРВЕРНЫЙ СЛОЙ · VERCEL</text><text x="510" y="180" font-size="16" font-weight="700" fill="#205f53">Webhook / функции</text><path d="M510 195h220" stroke="#dbe2dc"/><text x="510" y="220" font-size="12" font-weight="700" fill="#23332f">1. Проверить запрос</text><text x="510" y="243" font-size="12" font-weight="700" fill="#23332f">2. Проверить поля и правила</text><text x="510" y="266" font-size="11" font-weight="700" fill="#23332f">3. Подтвердить сводку</text><text x="510" y="290" font-size="10" fill="#63716a">LLM не меняет заказ напрямую</text>
+<rect x="800" y="100" width="175" height="115" rx="11" fill="#fff" stroke="#bfd3c5"/>
+<text x="818" y="127" font-size="10" font-weight="700" letter-spacing="1" fill="#c6844d">ЯЗЫКОВАЯ МОДЕЛЬ</text><text x="818" y="159" font-size="16" font-weight="700" fill="#205f53">Llama 4 Scout</text><text x="818" y="183" font-size="11" fill="#63716a">разбор текста / справка</text><text x="818" y="199" font-size="10" fill="#63716a">через AI Gateway</text>
+<rect x="800" y="253" width="175" height="104" rx="11" fill="#fff" stroke="#bfd3c5"/>
+<text x="818" y="279" font-size="10" font-weight="700" letter-spacing="1" fill="#c6844d">ХРАНИЛИЩЕ</text><text x="818" y="310" font-size="14" font-weight="700" fill="#205f53">Постоянная БД</text><text x="818" y="333" font-size="10" fill="#63716a">заказы · история событий</text>
+<g stroke="#8ba796" stroke-width="2" fill="none"><path d="M215 305h28v-78h32"/><path d="M445 227h45"/><path d="M750 174h20v-18h30"/><path d="M750 252h20v53h30"/></g>
+<g fill="#8ba796"><path d="M271 222l7 5-7 5z"/><path d="M482 223l8 4-8 4z"/><path d="M792 152l8 4-8 4z"/><path d="M792 301l8 4-8 4z"/></g>
+<path d="M120 220v33" stroke="#d3a477" stroke-width="2" stroke-dasharray="4 4"/>
+<text x="28" y="385" font-size="11" fill="#63716a">Рисунок 2 — Логическая архитектура продукта</text>
+</g></svg>

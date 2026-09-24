@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+# Internal project tracking and Obsidian workspace settings stay local.
+docs/07-coursework/README.md
+docs/02-wiki/source-vault/04_Техническая/06_Доска спринта.md
+docs/02-wiki/source-vault/.obsidian/
+# Local report is not part of the public static Wiki.
+docs/02-wiki/materials/*.docx
