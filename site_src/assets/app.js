@@ -24,4 +24,53 @@
   input.addEventListener('input', e => render(e.target.value));
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { const first = results.querySelector('a'); if (first) location.href = first.href; e.preventDefault(); } });
   document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); if (dialog.open) dialog.close(); else openSearch(); } });
+
+  // Add gentle easing to page-level mouse-wheel scrolling without overriding
+  // native scrolling inside independently scrollable panels.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let targetY = window.scrollY;
+    let frame = 0;
+    let previousScrollBehavior = '';
+    const stopWheelAnimation = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+      targetY = window.scrollY;
+    };
+    const easeWheel = event => {
+      if (event.defaultPrevented || event.ctrlKey || event.deltaY === 0) return;
+      if (event.target.closest('dialog, .sidebar, .article-toc, .search-results, pre, .prose table')) return;
+      const multiplier = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? (parseFloat(getComputedStyle(document.body).lineHeight) || 24)
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? window.innerHeight : 1;
+      const delta = event.deltaY * multiplier;
+      if (Math.abs(delta) < 35) return;
+
+      event.preventDefault();
+      if (!frame) {
+        previousScrollBehavior = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
+      }
+      targetY = Math.max(0, Math.min(document.documentElement.scrollHeight - window.innerHeight, targetY + delta * 1.15));
+      if (frame) return;
+
+      const animate = () => {
+        const distance = targetY - window.scrollY;
+        if (Math.abs(distance) < 1) {
+          window.scrollTo(0, targetY);
+          frame = 0;
+          document.documentElement.style.scrollBehavior = previousScrollBehavior;
+          return;
+        }
+        window.scrollTo(0, window.scrollY + distance * 0.18);
+        frame = requestAnimationFrame(animate);
+      };
+      frame = requestAnimationFrame(animate);
+    };
+    window.addEventListener('wheel', easeWheel, { passive: false });
+    window.addEventListener('keydown', event => {
+      if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) stopWheelAnimation();
+    }, { passive: true });
+    window.addEventListener('pointerdown', stopWheelAnimation, { passive: true });
+  }
 })();
