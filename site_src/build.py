@@ -144,6 +144,13 @@ def copy_assets() -> None:
     bpmn = ROOT / "docs" / "03-bpmn" / "homework" / "Интеллект_карта_BPMN_2_0.png"
     if bpmn.exists():
         shutil.copy2(bpmn, assets / "mindmap-bpmn.png")
+    process_diagram = ROOT / "docs" / "03-bpmn" / "materials" / "order-process.svg"
+    if process_diagram.exists():
+        shutil.copy2(process_diagram, assets / "order-process-bpmn.svg")
+    prototype = ROOT / "docs" / "04-mockup" / "materials" / "prototype"
+    if prototype.exists():
+        shutil.copytree(prototype, OUTPUT / "prototype", dirs_exist_ok=True,
+                        ignore=shutil.ignore_patterns("*.png", "__pycache__"))
 
 
 def label_tables(content: str, page: Page) -> str:
