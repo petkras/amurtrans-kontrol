@@ -2,6 +2,18 @@
   const menu = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.top-nav');
   menu?.addEventListener('click', () => { const open = nav.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open)); });
+  nav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    nav.classList.remove('open');
+    menu?.setAttribute('aria-expanded', 'false');
+  }));
+  const sidebar = document.querySelector('.sidebar');
+  const groups = [...(sidebar?.querySelectorAll('details') || [])];
+  groups.forEach(group => group.addEventListener('toggle', () => {
+    if (group.open) groups.forEach(other => { if (other !== group) other.open = false; });
+  }));
+  sidebar?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    groups.forEach(group => { group.open = false; });
+  }));
   const dialog = document.querySelector('.search-dialog');
   const input = dialog.querySelector('input');
   const results = dialog.querySelector('.search-results');
