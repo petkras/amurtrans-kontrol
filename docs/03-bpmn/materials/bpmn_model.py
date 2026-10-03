@@ -22,6 +22,12 @@ LANES = ['Клиент', 'Менеджер', 'Логист', 'Диспетчер
 TITLES = ['Приём и уточнение заявки', 'Проверка возможности и расчёт',
           'Согласование условий', 'Назначение ресурсов и погрузка',
           'Перевозка и обработка отклонений', 'Претензии, документы и закрытие']
+MAIN_ROUTE = ['Start_Request', 'Task_Request', 'Task_Register', 'Gateway_Complete',
+              'Task_Check', 'Gateway_Feasible', 'Task_Calculate', 'Task_Offer',
+              'Task_Approve', 'Gateway_Approved', 'Task_Assign', 'Gateway_Assigned',
+              'Task_Route', 'Task_Arrival', 'Task_Load', 'Task_Monitor',
+              'Gateway_Incident', 'Task_Deliver', 'Task_Proof', 'Gateway_Claim',
+              'Task_Documents', 'Task_Invoice', 'Task_Payment', 'Task_Close', 'End_Closed']
 NODES = {}
 FLOWS = []
 def node(id, name, lane, phase, col, track=0, kind='task', support=''):
@@ -79,11 +85,19 @@ def layout(phases, compact=False):
     for phase in phases:
         offsets[phase]=x
         x += (max(v['col'] for v in selected.values() if v['phase']==phase)+1)*220+100
+    lane_height=260 if compact else 360
     boxes={}
     for id,v in selected.items():
         w,h=(160,80) if v['kind']=='task' else (60,60)
-        boxes[id]=(offsets[v['phase']]+v['col']*220,100+lanes.index(v['lane'])*260+v['track']*120,w,h)
-    return selected,lanes,boxes,x+50,80+len(lanes)*260
+        boxes[id]=(offsets[v['phase']]+v['col']*220,100+lanes.index(v['lane'])*lane_height+v['track']*120,w,h)
+    if not compact:
+        # Terminations sit UNDER their exceptional task, not in the horizontal
+        # reading direction of the accepted route. They are not intermediate steps.
+        for end,task in [('End_Rejected','Task_Reject'),('End_Declined','Task_Cancel')]:
+            if end in boxes:
+                tx,ty,tw,th=boxes[task]
+                boxes[end]=(tx+50,ty+110,60,60)
+    return selected,lanes,boxes,x+50,80+len(lanes)*lane_height
 
 def port(box, side):
     x,y,w,h=box
@@ -104,10 +118,12 @@ def route(flow, boxes, width, height, occupied):
                      'Gateway_Approved':'Нет','Gateway_Revise':'Да',
                      'Gateway_Assigned':'Нет','Gateway_Incident':'Да','Gateway_Claim':'Да'}
     sside='B' if flow['loop'] or (a in exception_ports and flow['label']==exception_ports[a]) else 'R'
-    tside='L'
+    tside='T' if not flow['loop'] and NODES[b]['kind']=='endEvent' and B[1]>A[1]+A[3] and abs((A[0]+A[2]/2)-(B[0]+B[2]/2))<10 else 'L'
     start,end=port(A,sside),port(B,tside)
     delta={'R':(20,0),'L':(-20,0),'T':(0,-20),'B':(0,20)}
-    s=(start[0]+delta[sside][0],start[1]+delta[sside][1]); t=(end[0]-20,end[1])
+    if tside=='T':
+        sside='B'; start=port(A,sside)
+    s=(start[0]+delta[sside][0],start[1]+delta[sside][1]); t=(end[0]+delta[tside][0],end[1]+delta[tside][1])
     # Search on a 10px orthogonal grid. All coordinates and task centers align.
     blocked=set()
     for id,(x,y,w,h) in boxes.items():
@@ -143,13 +159,23 @@ def draw(phases, filename, compact=False):
         if f['a'] in selected and f['b'] in selected: paths[f['id']]=route(f,boxes,width,height,occupied)
     title=TITLES[phases[0]] if len(phases)==1 else 'Обработка заказа на перевозку'
     svg=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="{escape(title)}">', '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#355f50"/></marker></defs>',f'<rect width="{width}" height="{height}" fill="white"/>',f'<text x="20" y="32" font-family="Arial" font-size="22" font-weight="bold" fill="#173d31">BPMN 2.0 · {escape(title)}</text>']
+    lane_height=260 if compact else 360
     for i,lane in enumerate(lanes):
-        y=60+i*260
-        svg += [f'<rect x="10" y="{y}" width="{width-20}" height="260" fill="{("#f1f6f2" if i%2==0 else "white")}" stroke="#bdcec3"/>',f'<text x="22" y="{y+32}" font-family="Arial" font-size="17" font-weight="bold" fill="#285e4c">{LANES[lane]}</text>']
+        y=60+i*lane_height
+        svg += [f'<rect x="10" y="{y}" width="{width-20}" height="{lane_height}" fill="{("#f1f6f2" if i%2==0 else "white")}" stroke="#bdcec3"/>',f'<text x="22" y="{y+32}" font-family="Arial" font-size="17" font-weight="bold" fill="#285e4c">{LANES[lane]}</text>']
+    if not compact:
+        for phase in phases:
+            left=min(b[0] for id,b in boxes.items() if selected[id]['phase']==phase)
+            svg.append(f'<text x="{left}" y="55" font-family="Arial" font-size="17" font-weight="bold" fill="#205f53">{phase+1:02} · {escape(TITLES[phase])}</text>')
+        height+=45
+        svg[0]=svg[0].replace(f'height="{height-45}"',f'height="{height}"').replace(f' {height-45}"',f' {height}"')
+        svg[2]=svg[2].replace(f'height="{height-45}"',f'height="{height}"')
+        svg.append(f'<text x="20" y="{height-15}" font-family="Arial" font-size="18" fill="#466355">Основной маршрут — толстая зелёная линия. Тонкие связи — альтернативы и возвраты. Оранжевые окончания — отказ / отмена, без продолжения.</text>')
     for f in FLOWS:
         if f['id'] not in paths: continue
         pts=paths[f['id']]
-        svg.append('<polyline points="'+' '.join(f'{x},{y}' for x,y in pts)+'" fill="none" stroke="#355f50" stroke-width="2.4" marker-end="url(#arrow)"/>')
+        main=(f['a'],f['b']) in set(zip(MAIN_ROUTE,MAIN_ROUTE[1:]))
+        svg.append('<polyline points="'+' '.join(f'{x},{y}' for x,y in pts)+f'" fill="none" stroke="{"#205f53" if main else "#7c8f86"}" stroke-width="{4 if main else 2}" marker-end="url(#arrow)"/>')
         if f['label']:
             x,y=pts[0]; vertical=pts[1][0]==x
             svg.append(f'<text x="{x+8}" y="{y+24 if vertical else y-10}" font-family="Arial" font-size="15" fill="#8a592b">{f["label"]}</text>')
@@ -163,7 +189,8 @@ def draw(phases, filename, compact=False):
             svg.append(f'<path d="M{x+30} {y}l30 30-30 30-30-30Z" fill="#fff8ea" stroke="#a57532" stroke-width="2"/><path d="M{x+20} {y+20}l20 20m0-20-20 20" stroke="#a57532" stroke-width="2"/>')
             svg.append(f'<text x="{x+30}" y="{y-12}" text-anchor="middle" font-family="Arial" font-size="14" fill="#664723">{escape(name)}</text>')
         else:
-            svg.append(f'<circle cx="{x+30}" cy="{y+30}" r="28" fill="white" stroke="#2d7058" stroke-width="{4 if kind=="endEvent" else 2}"/><text x="{x+30}" y="{y+85}" text-anchor="middle" font-family="Arial" font-size="14" fill="#203b30">{escape(name)}</text>')
+            exceptional=id in ['End_Rejected','End_Declined']
+            svg.append(f'<circle cx="{x+30}" cy="{y+30}" r="28" fill="{"#fbf0e6" if exceptional else "white"}" stroke="{"#c6844d" if exceptional else "#2d7058"}" stroke-width="{4 if kind=="endEvent" else 2}"/><text x="{x+30}" y="{y+85}" text-anchor="middle" font-family="Arial" font-size="14" fill="#203b30">{escape(name)}</text>')
     if compact:
         incoming=[f for f in FLOWS if f['b'] in selected and f['a'] not in selected]
         outgoing=[f for f in FLOWS if f['a'] in selected and f['b'] not in selected]
@@ -211,7 +238,7 @@ def write_model(boxes,paths,width,height):
         s=ET.SubElement(plane,'{'+D+'}BPMNShape',id='Shape_'+id,bpmnElement=id,**attrs)
         ET.SubElement(s,'{'+C+'}Bounds',**{k:str(v) for k,v in zip(['x','y','width','height'],box)})
     shape('Participant_Order',(0,60,width,height-60),isHorizontal='true')
-    for i in range(6): shape(f'Lane_{i}',(30,60+i*260,width-30,260),isHorizontal='true')
+    for i in range(6): shape(f'Lane_{i}',(30,60+i*360,width-30,360),isHorizontal='true')
     for id,box in boxes.items(): shape(id,box)
     for f in FLOWS:
         edge=ET.SubElement(plane,'{'+D+'}BPMNEdge',id='Edge_'+f['id'],bpmnElement=f['id'])
