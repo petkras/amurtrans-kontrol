@@ -147,6 +147,10 @@ def copy_assets() -> None:
     process_diagram = ROOT / "docs" / "03-bpmn" / "materials" / "order-process.svg"
     if process_diagram.exists():
         shutil.copy2(process_diagram, assets / "order-process-bpmn.svg")
+        shutil.copy2(process_diagram.with_suffix('.bpmn'), assets / 'order-process.bpmn')
+        for phase in range(1, 7):
+            source = process_diagram.parent / f'order-process-report-{phase}.svg'
+            shutil.copy2(source, assets / source.name)
     prototype = ROOT / "docs" / "04-mockup" / "materials" / "prototype"
     if prototype.exists():
         shutil.copytree(prototype, OUTPUT / "prototype", dirs_exist_ok=True,

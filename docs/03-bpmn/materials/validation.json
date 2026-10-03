@@ -1,0 +1,16 @@
+{
+  "nodes": 39,
+  "flows": 43,
+  "lanes": [
+    "Клиент",
+    "Менеджер",
+    "Логист",
+    "Диспетчер",
+    "Водитель",
+    "Бухгалтерия"
+  ],
+  "reachable": true,
+  "no_outgoing_end_events": true,
+  "all_branches_named": true,
+  "orthogonal_flows": true
+}
