@@ -298,8 +298,8 @@ def route(flow, boxes, width, height, occupied):
         return fixed([start,s,(s[0],lower_y),(outer_x,lower_y),
                       (outer_x,t[1]),t,end])
     if a=='Gateway_Resolved' and b=='Task_Resolve' and flow['label']=='Нет':
-        # No leaves on the right, bends around Continue's outside edge, then
-        # returns to the resolution task from its right side.
+        # No leaves left into the free corridor between the gateway and
+        # Continue, then returns to the resolution task from its right side.
         outer_x=boxes['Task_Continue'][0]+boxes['Task_Continue'][2]+40
         return fixed([start,s,(outer_x,s[1]),
                       (outer_x,t[1]),t,end])
