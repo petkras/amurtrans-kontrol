@@ -12,5 +12,39 @@
   "reachable": true,
   "no_outgoing_end_events": true,
   "all_branches_named": true,
-  "orthogonal_flows": true
+  "orthogonal_flows": true,
+  "distinct_gateway_ports": {
+    "Gateway_Complete": {
+      "Нет": "R",
+      "Да": "B"
+    },
+    "Gateway_Feasible": {
+      "Нет": "B",
+      "Да": "R"
+    },
+    "Gateway_Approved": {
+      "Нет": "B",
+      "Да": "R"
+    },
+    "Gateway_Revise": {
+      "Да": "B",
+      "Нет": "R"
+    },
+    "Gateway_Assigned": {
+      "Нет": "B",
+      "Да": "R"
+    },
+    "Gateway_Incident": {
+      "Да": "R",
+      "Нет": "B"
+    },
+    "Gateway_Resolved": {
+      "Нет": "L",
+      "Да": "T"
+    },
+    "Gateway_Claim": {
+      "Да": "R",
+      "Нет": "B"
+    }
+  }
 }
