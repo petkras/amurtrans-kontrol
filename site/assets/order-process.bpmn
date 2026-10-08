@@ -40,6 +40,7 @@
         <flowNodeRef>Gateway_Incident</flowNodeRef>
         <flowNodeRef>Task_Incident</flowNodeRef>
         <flowNodeRef>Task_Resolve</flowNodeRef>
+        <flowNodeRef>Gateway_Resolved</flowNodeRef>
       </lane>
       <lane id="Lane_4" name="Водитель">
         <flowNodeRef>Task_Route</flowNodeRef>
@@ -68,40 +69,40 @@
     <task id="Task_Register" name="Зарегистрировать и проверить заявку">
       <documentation>Карточка заказа, проверка полей, история уточнений. Ответственное лицо сохраняет право принятия решения.</documentation>
       <incoming>Flow_02</incoming>
-      <incoming>Flow_40</incoming>
+      <incoming>Flow_43</incoming>
       <outgoing>Flow_03</outgoing>
     </task>
     <exclusiveGateway id="Gateway_Complete" name="Данные полные?">
       <incoming>Flow_03</incoming>
-      <outgoing>Flow_26</outgoing>
       <outgoing>Flow_27</outgoing>
+      <outgoing>Flow_28</outgoing>
     </exclusiveGateway>
     <task id="Task_Ask" name="Запросить недостающие данные">
       <documentation>Запрос только отсутствующих или некорректных полей. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_26</incoming>
+      <incoming>Flow_27</incoming>
       <outgoing>Flow_04</outgoing>
     </task>
     <task id="Task_Clarify" name="Дополнить заявку">
       <incoming>Flow_04</incoming>
-      <outgoing>Flow_40</outgoing>
+      <outgoing>Flow_43</outgoing>
     </task>
     <task id="Task_Check" name="Проверить возможность перевозки">
       <documentation>Карточка груза, ограничения маршрута и временного окна. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_27</incoming>
+      <incoming>Flow_28</incoming>
       <outgoing>Flow_05</outgoing>
     </task>
     <exclusiveGateway id="Gateway_Feasible" name="Перевозка возможна?">
       <incoming>Flow_05</incoming>
-      <outgoing>Flow_28</outgoing>
       <outgoing>Flow_29</outgoing>
+      <outgoing>Flow_30</outgoing>
     </exclusiveGateway>
     <task id="Task_Calculate" name="Рассчитать маршрут, срок и стоимость">
       <documentation>Версия расчёта и предложение; решение утверждает логист. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_29</incoming>
+      <incoming>Flow_30</incoming>
       <outgoing>Flow_07</outgoing>
     </task>
     <task id="Task_Reject" name="Зафиксировать причину отказа">
-      <incoming>Flow_28</incoming>
+      <incoming>Flow_29</incoming>
       <outgoing>Flow_06</outgoing>
     </task>
     <endEvent id="End_Rejected" name="Перевозка отклонена">
@@ -110,7 +111,7 @@
     <task id="Task_Offer" name="Направить условия клиенту">
       <documentation>Согласуемая версия предложения. Ответственное лицо сохраняет право принятия решения.</documentation>
       <incoming>Flow_07</incoming>
-      <incoming>Flow_41</incoming>
+      <incoming>Flow_44</incoming>
       <outgoing>Flow_08</outgoing>
     </task>
     <task id="Task_Approve" name="Рассмотреть предложение">
@@ -119,21 +120,21 @@
     </task>
     <exclusiveGateway id="Gateway_Approved" name="Условия приняты?">
       <incoming>Flow_09</incoming>
-      <outgoing>Flow_30</outgoing>
       <outgoing>Flow_31</outgoing>
+      <outgoing>Flow_32</outgoing>
     </exclusiveGateway>
     <exclusiveGateway id="Gateway_Revise" name="Нужны изменения?">
-      <incoming>Flow_30</incoming>
-      <outgoing>Flow_32</outgoing>
+      <incoming>Flow_31</incoming>
       <outgoing>Flow_33</outgoing>
+      <outgoing>Flow_34</outgoing>
     </exclusiveGateway>
     <task id="Task_Recalculate" name="Изменить расчёт и условия">
       <documentation>Новая версия расчёта; прежнее согласование не переносится. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_32</incoming>
-      <outgoing>Flow_41</outgoing>
+      <incoming>Flow_33</incoming>
+      <outgoing>Flow_44</outgoing>
     </task>
     <task id="Task_Cancel" name="Зафиксировать отмену заказа">
-      <incoming>Flow_33</incoming>
+      <incoming>Flow_34</incoming>
       <outgoing>Flow_10</outgoing>
     </task>
     <endEvent id="End_Declined" name="Заказ отменён">
@@ -141,21 +142,21 @@
     </endEvent>
     <task id="Task_Assign" name="Назначить автомобиль и водителя">
       <documentation>Назначение ресурсов и план рейса. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_31</incoming>
-      <incoming>Flow_42</incoming>
+      <incoming>Flow_32</incoming>
+      <incoming>Flow_45</incoming>
       <outgoing>Flow_11</outgoing>
     </task>
     <exclusiveGateway id="Gateway_Assigned" name="Ресурсы назначены?">
       <incoming>Flow_11</incoming>
-      <outgoing>Flow_34</outgoing>
       <outgoing>Flow_35</outgoing>
+      <outgoing>Flow_36</outgoing>
     </exclusiveGateway>
     <task id="Task_Alternative" name="Подобрать другой транспорт или водителя">
-      <incoming>Flow_34</incoming>
-      <outgoing>Flow_42</outgoing>
+      <incoming>Flow_35</incoming>
+      <outgoing>Flow_45</outgoing>
     </task>
     <task id="Task_Route" name="Получить маршрут и документы">
-      <incoming>Flow_35</incoming>
+      <incoming>Flow_36</incoming>
       <outgoing>Flow_12</outgoing>
     </task>
     <task id="Task_Arrival" name="Прибыть на погрузку">
@@ -170,71 +171,77 @@
     <task id="Task_Monitor" name="Контролировать рейс и события">
       <documentation>События, статусы и журнал инцидентов; GPS-интеграция не заявляется. Ответственное лицо сохраняет право принятия решения.</documentation>
       <incoming>Flow_14</incoming>
-      <incoming>Flow_43</incoming>
       <outgoing>Flow_15</outgoing>
     </task>
     <exclusiveGateway id="Gateway_Incident" name="Есть отклонение?">
       <incoming>Flow_15</incoming>
-      <outgoing>Flow_36</outgoing>
+      <incoming>Flow_42</incoming>
       <outgoing>Flow_37</outgoing>
+      <outgoing>Flow_38</outgoing>
     </exclusiveGateway>
     <task id="Task_Incident" name="Создать карточку инцидента">
-      <incoming>Flow_36</incoming>
+      <incoming>Flow_37</incoming>
       <outgoing>Flow_16</outgoing>
     </task>
     <task id="Task_Resolve" name="Согласовать решение по инциденту">
       <incoming>Flow_16</incoming>
+      <incoming>Flow_39</incoming>
       <outgoing>Flow_17</outgoing>
     </task>
     <task id="Task_Continue" name="Продолжить рейс по согласованному решению">
       <incoming>Flow_17</incoming>
-      <outgoing>Flow_43</outgoing>
-    </task>
-    <task id="Task_Deliver" name="Доставить груз">
-      <incoming>Flow_37</incoming>
       <outgoing>Flow_18</outgoing>
+    </task>
+    <exclusiveGateway id="Gateway_Resolved" name="Отклонение устранено?">
+      <incoming>Flow_18</incoming>
+      <outgoing>Flow_39</outgoing>
+      <outgoing>Flow_42</outgoing>
+    </exclusiveGateway>
+    <task id="Task_Deliver" name="Доставить груз">
+      <incoming>Flow_38</incoming>
+      <outgoing>Flow_19</outgoing>
     </task>
     <task id="Task_Proof" name="Получить подтверждение доставки">
       <documentation>Подписанная ТТН / УПД или электронное подтверждение. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_18</incoming>
-      <outgoing>Flow_19</outgoing>
+      <incoming>Flow_19</incoming>
+      <outgoing>Flow_20</outgoing>
     </task>
     <exclusiveGateway id="Gateway_Claim" name="Есть претензия?">
-      <incoming>Flow_19</incoming>
-      <outgoing>Flow_38</outgoing>
-      <outgoing>Flow_39</outgoing>
+      <incoming>Flow_20</incoming>
+      <outgoing>Flow_40</outgoing>
+      <outgoing>Flow_41</outgoing>
     </exclusiveGateway>
     <task id="Task_Claim" name="Зарегистрировать претензию и доказательства">
-      <incoming>Flow_38</incoming>
-      <outgoing>Flow_20</outgoing>
+      <incoming>Flow_40</incoming>
+      <outgoing>Flow_21</outgoing>
     </task>
     <task id="Task_ClaimResolve" name="Обработать претензию и зафиксировать решение">
       <documentation>Результат урегулирования; до него заказ не закрывается. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_20</incoming>
-      <outgoing>Flow_21</outgoing>
+      <incoming>Flow_21</incoming>
+      <outgoing>Flow_22</outgoing>
     </task>
     <task id="Task_Documents" name="Передать закрывающие документы">
-      <incoming>Flow_21</incoming>
-      <incoming>Flow_39</incoming>
-      <outgoing>Flow_22</outgoing>
+      <incoming>Flow_22</incoming>
+      <incoming>Flow_41</incoming>
+      <outgoing>Flow_23</outgoing>
     </task>
     <task id="Task_Invoice" name="Проверить документы и выставить счёт">
       <documentation>Комплект документов, счёт и срок оплаты. Ответственное лицо сохраняет право принятия решения.</documentation>
-      <incoming>Flow_22</incoming>
-      <outgoing>Flow_23</outgoing>
-    </task>
-    <task id="Task_Payment" name="Проверить оплату или передачу задолженности">
-      <documentation>Основание закрытия согласно правилам Wiki. Ответственное лицо сохраняет право принятия решения.</documentation>
       <incoming>Flow_23</incoming>
       <outgoing>Flow_24</outgoing>
     </task>
-    <task id="Task_Close" name="Закрыть заказ">
-      <documentation>Финальный статус после документов и урегулирования. Ответственное лицо сохраняет право принятия решения.</documentation>
+    <task id="Task_Payment" name="Проверить оплату или передачу задолженности">
+      <documentation>Основание закрытия согласно правилам Wiki. Ответственное лицо сохраняет право принятия решения.</documentation>
       <incoming>Flow_24</incoming>
       <outgoing>Flow_25</outgoing>
     </task>
-    <endEvent id="End_Closed" name="Заказ закрыт">
+    <task id="Task_Close" name="Закрыть заказ">
+      <documentation>Финальный статус после документов и урегулирования. Ответственное лицо сохраняет право принятия решения.</documentation>
       <incoming>Flow_25</incoming>
+      <outgoing>Flow_26</outgoing>
+    </task>
+    <endEvent id="End_Closed" name="Заказ закрыт">
+      <incoming>Flow_26</incoming>
     </endEvent>
     <sequenceFlow id="Flow_01" sourceRef="Start_Request" targetRef="Task_Request" />
     <sequenceFlow id="Flow_02" sourceRef="Task_Request" targetRef="Task_Register" />
@@ -253,32 +260,34 @@
     <sequenceFlow id="Flow_15" sourceRef="Task_Monitor" targetRef="Gateway_Incident" />
     <sequenceFlow id="Flow_16" sourceRef="Task_Incident" targetRef="Task_Resolve" />
     <sequenceFlow id="Flow_17" sourceRef="Task_Resolve" targetRef="Task_Continue" />
-    <sequenceFlow id="Flow_18" sourceRef="Task_Deliver" targetRef="Task_Proof" />
-    <sequenceFlow id="Flow_19" sourceRef="Task_Proof" targetRef="Gateway_Claim" />
-    <sequenceFlow id="Flow_20" sourceRef="Task_Claim" targetRef="Task_ClaimResolve" />
-    <sequenceFlow id="Flow_21" sourceRef="Task_ClaimResolve" targetRef="Task_Documents" />
-    <sequenceFlow id="Flow_22" sourceRef="Task_Documents" targetRef="Task_Invoice" />
-    <sequenceFlow id="Flow_23" sourceRef="Task_Invoice" targetRef="Task_Payment" />
-    <sequenceFlow id="Flow_24" sourceRef="Task_Payment" targetRef="Task_Close" />
-    <sequenceFlow id="Flow_25" sourceRef="Task_Close" targetRef="End_Closed" />
-    <sequenceFlow id="Flow_26" sourceRef="Gateway_Complete" targetRef="Task_Ask" name="Нет" />
-    <sequenceFlow id="Flow_27" sourceRef="Gateway_Complete" targetRef="Task_Check" name="Да" />
-    <sequenceFlow id="Flow_28" sourceRef="Gateway_Feasible" targetRef="Task_Reject" name="Нет" />
-    <sequenceFlow id="Flow_29" sourceRef="Gateway_Feasible" targetRef="Task_Calculate" name="Да" />
-    <sequenceFlow id="Flow_30" sourceRef="Gateway_Approved" targetRef="Gateway_Revise" name="Нет" />
-    <sequenceFlow id="Flow_31" sourceRef="Gateway_Approved" targetRef="Task_Assign" name="Да" />
-    <sequenceFlow id="Flow_32" sourceRef="Gateway_Revise" targetRef="Task_Recalculate" name="Да" />
-    <sequenceFlow id="Flow_33" sourceRef="Gateway_Revise" targetRef="Task_Cancel" name="Нет" />
-    <sequenceFlow id="Flow_34" sourceRef="Gateway_Assigned" targetRef="Task_Alternative" name="Нет" />
-    <sequenceFlow id="Flow_35" sourceRef="Gateway_Assigned" targetRef="Task_Route" name="Да" />
-    <sequenceFlow id="Flow_36" sourceRef="Gateway_Incident" targetRef="Task_Incident" name="Да" />
-    <sequenceFlow id="Flow_37" sourceRef="Gateway_Incident" targetRef="Task_Deliver" name="Нет" />
-    <sequenceFlow id="Flow_38" sourceRef="Gateway_Claim" targetRef="Task_Claim" name="Да" />
-    <sequenceFlow id="Flow_39" sourceRef="Gateway_Claim" targetRef="Task_Documents" name="Нет" />
-    <sequenceFlow id="Flow_40" sourceRef="Task_Clarify" targetRef="Task_Register" />
-    <sequenceFlow id="Flow_41" sourceRef="Task_Recalculate" targetRef="Task_Offer" />
-    <sequenceFlow id="Flow_42" sourceRef="Task_Alternative" targetRef="Task_Assign" />
-    <sequenceFlow id="Flow_43" sourceRef="Task_Continue" targetRef="Task_Monitor" />
+    <sequenceFlow id="Flow_18" sourceRef="Task_Continue" targetRef="Gateway_Resolved" />
+    <sequenceFlow id="Flow_19" sourceRef="Task_Deliver" targetRef="Task_Proof" />
+    <sequenceFlow id="Flow_20" sourceRef="Task_Proof" targetRef="Gateway_Claim" />
+    <sequenceFlow id="Flow_21" sourceRef="Task_Claim" targetRef="Task_ClaimResolve" />
+    <sequenceFlow id="Flow_22" sourceRef="Task_ClaimResolve" targetRef="Task_Documents" />
+    <sequenceFlow id="Flow_23" sourceRef="Task_Documents" targetRef="Task_Invoice" />
+    <sequenceFlow id="Flow_24" sourceRef="Task_Invoice" targetRef="Task_Payment" />
+    <sequenceFlow id="Flow_25" sourceRef="Task_Payment" targetRef="Task_Close" />
+    <sequenceFlow id="Flow_26" sourceRef="Task_Close" targetRef="End_Closed" />
+    <sequenceFlow id="Flow_27" sourceRef="Gateway_Complete" targetRef="Task_Ask" name="Нет" />
+    <sequenceFlow id="Flow_28" sourceRef="Gateway_Complete" targetRef="Task_Check" name="Да" />
+    <sequenceFlow id="Flow_29" sourceRef="Gateway_Feasible" targetRef="Task_Reject" name="Нет" />
+    <sequenceFlow id="Flow_30" sourceRef="Gateway_Feasible" targetRef="Task_Calculate" name="Да" />
+    <sequenceFlow id="Flow_31" sourceRef="Gateway_Approved" targetRef="Gateway_Revise" name="Нет" />
+    <sequenceFlow id="Flow_32" sourceRef="Gateway_Approved" targetRef="Task_Assign" name="Да" />
+    <sequenceFlow id="Flow_33" sourceRef="Gateway_Revise" targetRef="Task_Recalculate" name="Да" />
+    <sequenceFlow id="Flow_34" sourceRef="Gateway_Revise" targetRef="Task_Cancel" name="Нет" />
+    <sequenceFlow id="Flow_35" sourceRef="Gateway_Assigned" targetRef="Task_Alternative" name="Нет" />
+    <sequenceFlow id="Flow_36" sourceRef="Gateway_Assigned" targetRef="Task_Route" name="Да" />
+    <sequenceFlow id="Flow_37" sourceRef="Gateway_Incident" targetRef="Task_Incident" name="Да" />
+    <sequenceFlow id="Flow_38" sourceRef="Gateway_Incident" targetRef="Task_Deliver" name="Нет" />
+    <sequenceFlow id="Flow_39" sourceRef="Gateway_Resolved" targetRef="Task_Resolve" name="Нет" />
+    <sequenceFlow id="Flow_40" sourceRef="Gateway_Claim" targetRef="Task_Claim" name="Да" />
+    <sequenceFlow id="Flow_41" sourceRef="Gateway_Claim" targetRef="Task_Documents" name="Нет" />
+    <sequenceFlow id="Flow_42" sourceRef="Gateway_Resolved" targetRef="Gateway_Incident" name="Да" />
+    <sequenceFlow id="Flow_43" sourceRef="Task_Clarify" targetRef="Task_Register" />
+    <sequenceFlow id="Flow_44" sourceRef="Task_Recalculate" targetRef="Task_Offer" />
+    <sequenceFlow id="Flow_45" sourceRef="Task_Alternative" targetRef="Task_Assign" />
   </process>
   <bpmndi:BPMNDiagram id="Diagram_Order">
     <bpmndi:BPMNPlane id="Plane_Order" bpmnElement="Collaboration_Order">
@@ -389,6 +398,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Task_Continue" bpmnElement="Task_Continue">
         <dc:Bounds x="5860" y="1660" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Resolved" bpmnElement="Gateway_Resolved">
+        <dc:Bounds x="5860" y="1300" width="60" height="60" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Task_Deliver" bpmnElement="Task_Deliver">
         <dc:Bounds x="5420" y="1540" width="160" height="80" />
@@ -515,151 +527,183 @@
         <di:waypoint x="5860" y="1700" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_18" bpmnElement="Flow_18">
+        <di:waypoint x="5940" y="1660" />
+        <di:waypoint x="5940" y="1380" />
+        <di:waypoint x="5890" y="1380" />
+        <di:waypoint x="5890" y="1360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_19" bpmnElement="Flow_19">
         <di:waypoint x="5580" y="1580" />
         <di:waypoint x="5640" y="1580" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_19" bpmnElement="Flow_19">
-        <di:waypoint x="5800" y="1580" />
-        <di:waypoint x="6160" y="1580" />
-        <di:waypoint x="6160" y="490" />
+      <bpmndi:BPMNEdge id="Edge_Flow_20" bpmnElement="Flow_20">
+        <di:waypoint x="5720" y="1620" />
+        <di:waypoint x="5720" y="1740" />
+        <di:waypoint x="6140" y="1740" />
+        <di:waypoint x="6140" y="490" />
         <di:waypoint x="6180" y="490" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_20" bpmnElement="Flow_20">
+      <bpmndi:BPMNEdge id="Edge_Flow_21" bpmnElement="Flow_21">
         <di:waypoint x="6560" y="620" />
         <di:waypoint x="6620" y="620" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_21" bpmnElement="Flow_21">
+      <bpmndi:BPMNEdge id="Edge_Flow_22" bpmnElement="Flow_22">
         <di:waypoint x="6780" y="620" />
         <di:waypoint x="6800" y="620" />
-        <di:waypoint x="6800" y="1530" />
-        <di:waypoint x="6600" y="1530" />
-        <di:waypoint x="6600" y="1580" />
+        <di:waypoint x="6800" y="1580" />
         <di:waypoint x="6620" y="1580" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_22" bpmnElement="Flow_22">
+      <bpmndi:BPMNEdge id="Edge_Flow_23" bpmnElement="Flow_23">
         <di:waypoint x="6780" y="1580" />
         <di:waypoint x="6800" y="1580" />
         <di:waypoint x="6800" y="1940" />
         <di:waypoint x="6840" y="1940" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_23" bpmnElement="Flow_23">
+      <bpmndi:BPMNEdge id="Edge_Flow_24" bpmnElement="Flow_24">
         <di:waypoint x="7000" y="1940" />
         <di:waypoint x="7060" y="1940" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_24" bpmnElement="Flow_24">
+      <bpmndi:BPMNEdge id="Edge_Flow_25" bpmnElement="Flow_25">
         <di:waypoint x="7220" y="1940" />
         <di:waypoint x="7280" y="1940" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_25" bpmnElement="Flow_25">
+      <bpmndi:BPMNEdge id="Edge_Flow_26" bpmnElement="Flow_26">
         <di:waypoint x="7440" y="1940" />
         <di:waypoint x="7460" y="1940" />
         <di:waypoint x="7460" y="1930" />
         <di:waypoint x="7500" y="1930" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_26" bpmnElement="Flow_26">
-        <di:waypoint x="870" y="520" />
-        <di:waypoint x="870" y="620" />
-        <di:waypoint x="1060" y="620" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_27" bpmnElement="Flow_27">
-        <di:waypoint x="900" y="490" />
-        <di:waypoint x="920" y="490" />
-        <di:waypoint x="920" y="860" />
-        <di:waypoint x="1380" y="860" />
+        <di:waypoint x="870" y="520" />
+        <di:waypoint x="870" y="560" />
+        <di:waypoint x="1140" y="560" />
+        <di:waypoint x="1140" y="580" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_28" bpmnElement="Flow_28">
-        <di:waypoint x="1630" y="880" />
-        <di:waypoint x="1630" y="980" />
-        <di:waypoint x="1820" y="980" />
+        <di:waypoint x="870" y="520" />
+        <di:waypoint x="870" y="540" />
+        <di:waypoint x="860" y="540" />
+        <di:waypoint x="860" y="800" />
+        <di:waypoint x="1460" y="800" />
+        <di:waypoint x="1460" y="820" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_29" bpmnElement="Flow_29">
+        <di:waypoint x="1630" y="880" />
+        <di:waypoint x="1630" y="920" />
+        <di:waypoint x="1900" y="920" />
+        <di:waypoint x="1900" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_30" bpmnElement="Flow_30">
         <di:waypoint x="1660" y="850" />
         <di:waypoint x="1680" y="850" />
         <di:waypoint x="1680" y="860" />
         <di:waypoint x="1820" y="860" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_30" bpmnElement="Flow_30">
+      <bpmndi:BPMNEdge id="Edge_Flow_31" bpmnElement="Flow_31">
         <di:waypoint x="2830" y="160" />
         <di:waypoint x="2830" y="250" />
         <di:waypoint x="3020" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Edge_Flow_31" bpmnElement="Flow_31">
-        <di:waypoint x="2860" y="130" />
-        <di:waypoint x="3760" y="130" />
-        <di:waypoint x="3760" y="1220" />
-        <di:waypoint x="3780" y="1220" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_32" bpmnElement="Flow_32">
-        <di:waypoint x="3050" y="280" />
-        <di:waypoint x="3050" y="980" />
-        <di:waypoint x="3240" y="980" />
+        <di:waypoint x="2830" y="160" />
+        <di:waypoint x="2830" y="180" />
+        <di:waypoint x="2820" y="180" />
+        <di:waypoint x="2820" y="1160" />
+        <di:waypoint x="3860" y="1160" />
+        <di:waypoint x="3860" y="1180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_33" bpmnElement="Flow_33">
-        <di:waypoint x="3080" y="250" />
-        <di:waypoint x="3100" y="250" />
-        <di:waypoint x="3100" y="620" />
-        <di:waypoint x="3240" y="620" />
+        <di:waypoint x="3050" y="280" />
+        <di:waypoint x="3050" y="920" />
+        <di:waypoint x="3320" y="920" />
+        <di:waypoint x="3320" y="940" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_34" bpmnElement="Flow_34">
-        <di:waypoint x="4030" y="1240" />
-        <di:waypoint x="4030" y="1340" />
-        <di:waypoint x="4220" y="1340" />
+        <di:waypoint x="3080" y="250" />
+        <di:waypoint x="3100" y="250" />
+        <di:waypoint x="3100" y="560" />
+        <di:waypoint x="3320" y="560" />
+        <di:waypoint x="3320" y="580" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_35" bpmnElement="Flow_35">
-        <di:waypoint x="4060" y="1210" />
-        <di:waypoint x="4080" y="1210" />
-        <di:waypoint x="4080" y="1580" />
-        <di:waypoint x="4220" y="1580" />
+        <di:waypoint x="4030" y="1240" />
+        <di:waypoint x="4030" y="1280" />
+        <di:waypoint x="4300" y="1280" />
+        <di:waypoint x="4300" y="1300" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_36" bpmnElement="Flow_36">
-        <di:waypoint x="5230" y="1240" />
-        <di:waypoint x="5230" y="1340" />
-        <di:waypoint x="5420" y="1340" />
+        <di:waypoint x="4030" y="1240" />
+        <di:waypoint x="4030" y="1260" />
+        <di:waypoint x="4020" y="1260" />
+        <di:waypoint x="4020" y="1520" />
+        <di:waypoint x="4300" y="1520" />
+        <di:waypoint x="4300" y="1540" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_37" bpmnElement="Flow_37">
-        <di:waypoint x="5260" y="1210" />
-        <di:waypoint x="5280" y="1210" />
-        <di:waypoint x="5280" y="1580" />
-        <di:waypoint x="5420" y="1580" />
+        <di:waypoint x="5230" y="1240" />
+        <di:waypoint x="5230" y="1280" />
+        <di:waypoint x="5500" y="1280" />
+        <di:waypoint x="5500" y="1300" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_38" bpmnElement="Flow_38">
-        <di:waypoint x="6210" y="520" />
-        <di:waypoint x="6210" y="620" />
-        <di:waypoint x="6400" y="620" />
+        <di:waypoint x="5230" y="1240" />
+        <di:waypoint x="5230" y="1260" />
+        <di:waypoint x="5220" y="1260" />
+        <di:waypoint x="5220" y="1520" />
+        <di:waypoint x="5500" y="1520" />
+        <di:waypoint x="5500" y="1540" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_39" bpmnElement="Flow_39">
-        <di:waypoint x="6240" y="490" />
-        <di:waypoint x="6260" y="490" />
-        <di:waypoint x="6260" y="1580" />
-        <di:waypoint x="6620" y="1580" />
+        <di:waypoint x="5860" y="1330" />
+        <di:waypoint x="5840" y="1330" />
+        <di:waypoint x="5840" y="1280" />
+        <di:waypoint x="5720" y="1280" />
+        <di:waypoint x="5720" y="1300" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_40" bpmnElement="Flow_40">
-        <di:waypoint x="1140" y="300" />
-        <di:waypoint x="1140" y="410" />
-        <di:waypoint x="600" y="410" />
-        <di:waypoint x="600" y="500" />
-        <di:waypoint x="620" y="500" />
+        <di:waypoint x="6210" y="520" />
+        <di:waypoint x="6210" y="560" />
+        <di:waypoint x="6480" y="560" />
+        <di:waypoint x="6480" y="580" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_41" bpmnElement="Flow_41">
-        <di:waypoint x="3320" y="1020" />
-        <di:waypoint x="3320" y="1040" />
-        <di:waypoint x="2340" y="1040" />
-        <di:waypoint x="2340" y="500" />
-        <di:waypoint x="2360" y="500" />
+        <di:waypoint x="6210" y="520" />
+        <di:waypoint x="6210" y="540" />
+        <di:waypoint x="6200" y="540" />
+        <di:waypoint x="6200" y="1520" />
+        <di:waypoint x="6700" y="1520" />
+        <di:waypoint x="6700" y="1540" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_42" bpmnElement="Flow_42">
-        <di:waypoint x="4300" y="1380" />
-        <di:waypoint x="4300" y="1400" />
-        <di:waypoint x="3760" y="1400" />
-        <di:waypoint x="3760" y="1220" />
-        <di:waypoint x="3780" y="1220" />
+        <di:waypoint x="5920" y="1330" />
+        <di:waypoint x="5940" y="1330" />
+        <di:waypoint x="5940" y="1110" />
+        <di:waypoint x="5230" y="1110" />
+        <di:waypoint x="5230" y="1180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_Flow_43" bpmnElement="Flow_43">
-        <di:waypoint x="5940" y="1740" />
-        <di:waypoint x="5940" y="1760" />
-        <di:waypoint x="4960" y="1760" />
-        <di:waypoint x="4960" y="1220" />
-        <di:waypoint x="4980" y="1220" />
+        <di:waypoint x="1220" y="260" />
+        <di:waypoint x="1560" y="260" />
+        <di:waypoint x="1560" y="1160" />
+        <di:waypoint x="700" y="1160" />
+        <di:waypoint x="700" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_44" bpmnElement="Flow_44">
+        <di:waypoint x="3400" y="980" />
+        <di:waypoint x="3420" y="980" />
+        <di:waypoint x="3420" y="80" />
+        <di:waypoint x="2540" y="80" />
+        <di:waypoint x="2540" y="500" />
+        <di:waypoint x="2520" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_45" bpmnElement="Flow_45">
+        <di:waypoint x="4300" y="1380" />
+        <di:waypoint x="4300" y="1400" />
+        <di:waypoint x="4310" y="1400" />
+        <di:waypoint x="4310" y="1700" />
+        <di:waypoint x="3760" y="1700" />
+        <di:waypoint x="3760" y="1220" />
+        <di:waypoint x="3780" y="1220" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

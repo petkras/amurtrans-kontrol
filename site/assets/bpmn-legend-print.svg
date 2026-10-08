@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1180" viewBox="0 0 1400 1180" role="img" aria-labelledby="title desc">
+  <title id="title">Условные обозначения BPMN 2.0</title>
+  <desc id="desc">Печатная памятка: события, задачи, исключающий шлюз XOR, пул и дорожки, поток последовательности и поток сообщений.</desc>
+  <rect width="1400" height="1180" rx="28" fill="#f4f7f4"/>
+  <text x="46" y="62" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#173d31">Как читать элементы BPMN 2.0</text>
+  <text x="46" y="100" font-family="Arial, sans-serif" font-size="23" fill="#526b60">Обозначения и правила чтения, использованные в модели АмурТранс Контроль</text>
+
+  <!-- Events -->
+  <g font-family="Arial, sans-serif">
+    <rect x="36" y="132" width="650" height="300" rx="18" fill="#fff" stroke="#c9d8cf" stroke-width="2"/>
+    <text x="62" y="174" font-size="29" font-weight="700" fill="#204f40">Событие · круг</text>
+    <circle cx="150" cy="260" r="34" fill="#fff" stroke="#2d7058" stroke-width="3"/>
+    <circle cx="342" cy="260" r="34" fill="#fff" stroke="#2d7058" stroke-width="7"/>
+    <text x="150" y="322" text-anchor="middle" font-size="22" fill="#304d40">Начало</text>
+    <text x="342" y="322" text-anchor="middle" font-size="22" fill="#304d40">Завершение</text>
+    <text x="62" y="374" font-size="22" fill="#405c50">Круг отмечает событие; тонкая граница — старт,</text>
+    <text x="62" y="404" font-size="22" fill="#405c50">толстая — конечный исход процесса или ветви.</text>
+
+    <!-- Task -->
+    <rect x="714" y="132" width="650" height="300" rx="18" fill="#fff" stroke="#c9d8cf" stroke-width="2"/>
+    <text x="740" y="174" font-size="29" font-weight="700" fill="#204f40">Задача · скруглённый блок</text>
+    <rect x="780" y="220" width="510" height="76" rx="14" fill="#fff" stroke="#2d7058" stroke-width="4"/>
+    <text x="1035" y="267" text-anchor="middle" font-size="25" fill="#203b30">Проверить заявку</text>
+    <text x="740" y="350" font-size="22" fill="#405c50">Одно действие участника или системы.</text>
+    <text x="740" y="380" font-size="22" fill="#405c50">Название обычно начинается с глагола.</text>
+
+    <!-- XOR -->
+    <rect x="36" y="456" width="650" height="300" rx="18" fill="#fff" stroke="#c9d8cf" stroke-width="2"/>
+    <text x="62" y="498" font-size="29" font-weight="700" fill="#204f40">Шлюз XOR · ромб с крестом</text>
+    <path d="M170 548l54 54-54 54-54-54Z" fill="#fff8ea" stroke="#a57532" stroke-width="4"/>
+    <path d="M148 580l44 44m0-44-44 44" stroke="#a57532" stroke-width="4"/>
+    <path d="M225 602h150v-34h120m-120 34v34h120" fill="none" stroke="#2d7058" stroke-width="4"/>
+    <path d="M485 568l-16-10v20Z M485 636l-16-10v20Z" fill="#2d7058"/>
+    <text x="397" y="555" font-size="20" fill="#8a592b">Да</text>
+    <text x="397" y="667" font-size="20" fill="#8a592b">Нет</text>
+    <text x="62" y="712" font-size="22" fill="#405c50">Вопрос выбирает ровно одну ветвь;</text>
+    <text x="62" y="742" font-size="22" fill="#405c50">условия «Да» и «Нет» подписывают у стрелок.</text>
+
+    <!-- Pool & lanes -->
+    <rect x="714" y="456" width="650" height="300" rx="18" fill="#fff" stroke="#c9d8cf" stroke-width="2"/>
+    <text x="740" y="498" font-size="29" font-weight="700" fill="#204f40">Пул и дорожки · границы процесса</text>
+    <rect x="764" y="536" width="548" height="104" rx="6" fill="#f4f7f4" stroke="#6f9584" stroke-width="3"/>
+    <rect x="764" y="536" width="150" height="52" fill="#e8f0eb" stroke="#6f9584" stroke-width="2"/>
+    <rect x="764" y="588" width="150" height="52" fill="#e8f0eb" stroke="#6f9584" stroke-width="2"/>
+    <text x="839" y="570" text-anchor="middle" font-size="20" font-weight="700" fill="#315f4e">Менеджер</text>
+    <text x="839" y="622" text-anchor="middle" font-size="20" font-weight="700" fill="#315f4e">Водитель</text>
+    <rect x="936" y="546" width="330" height="32" rx="7" fill="#fff" stroke="#2d7058" stroke-width="2"/>
+    <rect x="936" y="598" width="330" height="32" rx="7" fill="#fff" stroke="#2d7058" stroke-width="2"/>
+    <text x="1101" y="569" text-anchor="middle" font-size="18" fill="#203b30">Проверить заявку</text>
+    <text x="1101" y="621" text-anchor="middle" font-size="18" fill="#203b30">Начать рейс</text>
+    <text x="740" y="690" font-size="22" fill="#405c50">Пул — весь процесс; дорожка внутри пула</text>
+    <text x="740" y="720" font-size="22" fill="#405c50">показывает роль, ответственную за действия.</text>
+
+    <!-- Sequence flow -->
+    <rect x="36" y="780" width="650" height="300" rx="18" fill="#fff" stroke="#c9d8cf" stroke-width="2"/>
+    <text x="62" y="822" font-size="29" font-weight="700" fill="#204f40">Sequence Flow · порядок работ</text>
+    <rect x="84" y="868" width="210" height="64" rx="12" fill="#fff" stroke="#2d7058" stroke-width="3"/>
+    <rect x="428" y="868" width="210" height="64" rx="12" fill="#fff" stroke="#2d7058" stroke-width="3"/>
+    <text x="189" y="908" text-anchor="middle" font-size="22" fill="#203b30">Проверить</text>
+    <text x="533" y="908" text-anchor="middle" font-size="22" fill="#203b30">Рассчитать</text>
+    <path d="M294 900h130" stroke="#2d7058" stroke-width="5"/>
+    <path d="M428 900l-20-12v24Z" fill="#2d7058"/>
+    <text x="62" y="986" font-size="22" fill="#405c50">Сплошная стрелка задаёт порядок шагов</text>
+    <text x="62" y="1016" font-size="22" fill="#405c50">внутри одного пула и может пересекать дорожки.</text>
+
+    <!-- Message flow -->
+    <rect x="714" y="780" width="650" height="300" rx="18" fill="#fff" stroke="#c9d8cf" stroke-width="2"/>
+    <text x="740" y="822" font-size="29" font-weight="700" fill="#204f40">Message Flow · обмен между пулами</text>
+    <rect x="780" y="868" width="190" height="64" rx="10" fill="#fff" stroke="#86a493" stroke-width="3"/>
+    <rect x="1110" y="868" width="190" height="64" rx="10" fill="#fff" stroke="#86a493" stroke-width="3"/>
+    <text x="875" y="908" text-anchor="middle" font-size="22" fill="#315f4e">Клиент</text>
+    <text x="1205" y="908" text-anchor="middle" font-size="22" fill="#315f4e">Организация</text>
+    <path d="M970 900h124" stroke="#bd8241" stroke-width="4" stroke-dasharray="12 10"/>
+    <path d="M1110 900l-17-10v20Z" fill="#bd8241"/>
+    <text x="740" y="986" font-size="22" fill="#405c50">Пунктир — сообщение между отдельными пулами.</text>
+    <text x="740" y="1016" font-size="22" fill="#405c50">В рассматриваемой модели такой поток не используется.</text>
+  </g>
+  <text x="46" y="1138" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#285e4c">В модели: события, задачи, XOR-шлюзы, дорожки и сплошные потоки последовательности.</text>
+</svg>
