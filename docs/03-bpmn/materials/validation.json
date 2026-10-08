@@ -13,6 +13,8 @@
   "no_outgoing_end_events": true,
   "all_branches_named": true,
   "orthogonal_flows": true,
+  "crossing_free": true,
+  "obstacle_free": true,
   "distinct_gateway_ports": {
     "Gateway_Complete": {
       "Нет": "R",
@@ -39,7 +41,7 @@
       "Нет": "B"
     },
     "Gateway_Resolved": {
-      "Нет": "L",
+      "Нет": "R",
       "Да": "T"
     },
     "Gateway_Claim": {

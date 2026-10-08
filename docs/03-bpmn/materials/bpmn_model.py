@@ -40,7 +40,7 @@ node('Task_Request', 'Передать заявку', 0, 0, 1, support='Бот �
 node('Task_Register', 'Зарегистрировать и проверить заявку', 1, 0, 2, support='Карточка заказа, проверка полей, история уточнений')
 node('Gateway_Complete', 'Данные полные?', 1, 0, 3, kind='exclusiveGateway')
 node('Task_Ask', 'Запросить недостающие данные', 1, 0, 4, 1, support='Запрос только отсутствующих или некорректных полей')
-node('Task_Clarify', 'Дополнить заявку', 0, 0, 4, 1)
+node('Task_Clarify', 'Дополнить заявку', 0, 0, 5, 1)
 node('Task_Check', 'Проверить возможность перевозки', 2, 1, 0, support='Карточка груза, ограничения маршрута и временного окна')
 node('Gateway_Feasible', 'Перевозка возможна?', 2, 1, 1, kind='exclusiveGateway')
 node('Task_Calculate', 'Рассчитать маршрут, срок и стоимость', 2, 1, 2, support='Версия расчёта и предложение; решение утверждает логист')
@@ -50,12 +50,12 @@ node('Task_Offer', 'Направить условия клиенту', 1, 2, 0, 
 node('Task_Approve', 'Рассмотреть предложение', 0, 2, 1)
 node('Gateway_Approved', 'Условия приняты?', 0, 2, 2, kind='exclusiveGateway')
 node('Gateway_Revise', 'Нужны изменения?', 0, 2, 3, 1, 'exclusiveGateway')
-node('Task_Recalculate', 'Изменить расчёт и условия', 2, 2, 4, 1, support='Новая версия расчёта; прежнее согласование не переносится')
+node('Task_Recalculate', 'Изменить расчёт и условия', 2, 2, 1, 1, support='Новая версия расчёта; прежнее согласование не переносится')
 node('Task_Cancel', 'Зафиксировать отмену заказа', 1, 2, 4, 1)
 node('End_Declined', 'Заказ отменён', 1, 2, 5, 1, 'endEvent')
 node('Task_Assign', 'Назначить автомобиль и водителя', 3, 3, 0, support='Назначение ресурсов и план рейса')
 node('Gateway_Assigned', 'Ресурсы назначены?', 3, 3, 1, kind='exclusiveGateway')
-node('Task_Alternative', 'Подобрать другой транспорт или водителя', 3, 3, 2, 1)
+node('Task_Alternative', 'Подобрать другой транспорт или водителя', 3, 3, 0, 1)
 node('Task_Route', 'Получить маршрут и документы', 4, 3, 2)
 node('Task_Arrival', 'Прибыть на погрузку', 4, 3, 3)
 node('Task_Load', 'Принять груз и начать рейс', 4, 3, 4, support='Фактическая погрузка, отметка «В пути»')
@@ -69,10 +69,10 @@ node('Gateway_Resolved', 'Отклонение устранено?', 4, 4, 5, 1,
      kind='exclusiveGateway',
      support='Да — вернуться к контролю рейса; Нет — повторно согласовать решение')
 node('Task_Deliver', 'Доставить груз', 4, 4, 2)
-node('Task_Proof', 'Получить подтверждение доставки', 4, 4, 3, support='Подписанная ТТН / УПД или электронное подтверждение')
+node('Task_Proof', 'Получить подтверждение доставки', 4, 4, 2, 1, support='Подписанная ТТН / УПД или электронное подтверждение')
 node('Gateway_Claim', 'Есть претензия?', 1, 5, 0, kind='exclusiveGateway')
-node('Task_Claim', 'Зарегистрировать претензию и доказательства', 1, 5, 1, 1)
-node('Task_ClaimResolve', 'Обработать претензию и зафиксировать решение', 1, 5, 2, 1, support='Результат урегулирования; до него заказ не закрывается')
+node('Task_Claim', 'Зарегистрировать претензию и доказательства', 1, 5, 1)
+node('Task_ClaimResolve', 'Обработать претензию и зафиксировать решение', 1, 5, 2, support='Результат урегулирования; до него заказ не закрывается')
 node('Task_Documents', 'Передать закрывающие документы', 4, 5, 2)
 node('Task_Invoice', 'Проверить документы и выставить счёт', 5, 5, 3, support='Комплект документов, счёт и срок оплаты')
 node('Task_Payment', 'Проверить оплату или передачу задолженности', 5, 5, 4, support='Основание закрытия согласно правилам Wiki')
@@ -123,77 +123,63 @@ def route(flow, boxes, width, height, occupied):
                      'Gateway_Approved':'Нет','Gateway_Revise':'Да',
                      'Gateway_Assigned':'Нет','Gateway_Incident':'Да',
                      'Gateway_Resolved':'Да','Gateway_Claim':'Нет'}
-    if a=='Task_Continue' and b=='Gateway_Resolved':
-        sside='R'
-    elif a=='Task_Ask' and b=='Task_Clarify':
-        sside='R'
-    elif a=='Gateway_Resolved' and b=='Task_Monitor' and flow['label']=='Да':
-        sside='T'
-    elif a=='Task_Clarify' and b=='Task_Register':
-        sside='B'
-    elif a=='Task_Recalculate' and b=='Task_Offer':
-        sside='R'
-    elif a=='Task_Proof' and b=='Gateway_Claim':
-        sside='B'
-    elif a=='Gateway_Complete' and b=='Task_Check':
-        sside='B'
-    elif a=='Gateway_Complete' and b=='Task_Ask':
-        sside='R'
-    elif a=='Gateway_Incident' and b=='Task_Incident' and flow['label']=='Да':
-        sside='R'
-    elif a=='Gateway_Incident' and b=='Task_Deliver' and flow['label']=='Нет':
-        sside='B'
-    elif a=='Task_Load' and b=='Task_Monitor':
-        sside='R'
-    elif a=='Gateway_Claim' and b=='Task_Claim' and flow['label']=='Да':
-        sside='R'
-    elif a=='Task_Alternative' and b=='Task_Assign' and flow['loop']:
-        sside='L'
-    elif a=='Task_ClaimResolve' and b=='Task_Documents':
-        sside='B'
-    elif a=='Task_Resolve' and b=='Task_Continue':
-        sside='B'
-    elif a=='Gateway_Resolved' and b=='Task_Resolve' and flow['label']=='Нет':
-        sside='L'
-    else:
+    source_ports={
+        ('Gateway_Complete','Task_Check'):'B',
+        ('Gateway_Incident','Task_Incident'):'R',
+        ('Gateway_Incident','Task_Deliver'):'B',
+        ('Gateway_Resolved','Task_Monitor'):'T',
+        ('Gateway_Resolved','Task_Resolve'):'R',
+        ('Gateway_Claim','Task_Claim'):'R',
+        ('Gateway_Claim','Task_Documents'):'B',
+        ('Gateway_Assigned','Task_Alternative'):'B',
+        ('Task_Alternative','Task_Assign'):'T',
+        ('Gateway_Revise','Task_Recalculate'):'B',
+        ('Task_Ask','Task_Clarify'):'R',
+        ('Task_Clarify','Task_Register'):'L',
+        ('Task_Load','Task_Monitor'):'R',
+        ('Task_Deliver','Task_Proof'):'B',
+        ('Task_Resolve','Task_Continue'):'R',
+        ('Task_Continue','Gateway_Resolved'):'R',
+        ('Task_Proof','Gateway_Claim'):'B',
+        ('Task_ClaimResolve','Task_Documents'):'B',
+        ('Task_Recalculate','Task_Offer'):'T',
+    }
+    sside=source_ports.get((a,b))
+    if sside is None:
         sside='B' if flow['loop'] or (a in exception_ports and flow['label']==exception_ports[a]) else 'R'
     gateway_branch=NODES[a]['kind']=='exclusiveGateway'
-    if a=='Task_Continue' and b=='Gateway_Resolved':
-        tside='B'
-    elif a=='Task_Ask' and b=='Task_Clarify':
-        tside='R'
-    elif a=='Task_Clarify' and b=='Task_Register':
-        tside='T'
-    elif a=='Task_Recalculate' and b=='Task_Offer':
-        tside='T'
-    elif a=='Task_Proof' and b=='Gateway_Claim':
-        tside='L'
-    elif a=='Task_Documents' and b=='Task_Invoice':
-        tside='T'
-    elif a=='Gateway_Complete' and b=='Task_Check':
-        tside='L'
-    elif a=='Gateway_Complete' and b=='Task_Ask':
-        tside='L'
-    elif a=='Gateway_Incident' and b=='Task_Deliver' and flow['label']=='Нет':
-        tside='L'
-    elif a=='Gateway_Incident' and b=='Task_Incident' and flow['label']=='Да':
-        tside='T'
-    elif a=='Gateway_Claim' and b=='Task_Documents' and flow['label']=='Нет':
-        tside='L'
-    elif a=='Task_ClaimResolve' and b=='Task_Documents':
-        tside='T'
-    elif a=='Task_Resolve' and b=='Task_Continue':
-        tside='T'
-    elif a=='Gateway_Resolved' and b=='Task_Resolve' and flow['label']=='Нет':
-        tside='R'
-    elif a=='Task_Alternative' and b=='Task_Assign' and flow['loop']:
-        tside='B'
-    elif a=='Gateway_Resolved' and b=='Task_Monitor' and flow['label']=='Да':
-        tside='T'
-    elif flow['loop'] and NODES[b]['kind']=='exclusiveGateway':
-        tside='B'
-    else:
-        tside='T' if (gateway_branch and NODES[b]['kind']=='task' and B[1]>A[1]) or (not flow['loop'] and NODES[b]['kind']=='endEvent' and B[1]>A[1]+A[3] and abs((A[0]+A[2]/2)-(B[0]+B[2]/2))<10) else 'L'
+    target_ports={
+        ('Gateway_Complete','Task_Check'):'L',
+        ('Gateway_Complete','Task_Ask'):'L',
+        ('Gateway_Incident','Task_Incident'):'L',
+        ('Gateway_Incident','Task_Deliver'):'L',
+        ('Gateway_Resolved','Task_Monitor'):'T',
+        ('Gateway_Resolved','Task_Resolve'):'T',
+        ('Gateway_Claim','Task_Claim'):'L',
+        ('Gateway_Claim','Task_Documents'):'L',
+        ('Gateway_Assigned','Task_Alternative'):'R',
+        ('Gateway_Assigned','Task_Route'):'L',
+        ('Task_Alternative','Task_Assign'):'B',
+        ('Gateway_Revise','Task_Recalculate'):'R',
+        ('Task_Ask','Task_Clarify'):'B',
+        ('Task_Clarify','Task_Register'):'T',
+        ('Task_Load','Task_Monitor'):'L',
+        ('Task_Deliver','Task_Proof'):'T',
+        ('Task_Resolve','Task_Continue'):'L',
+        ('Task_Continue','Gateway_Resolved'):'L',
+        ('Task_Proof','Gateway_Claim'):'L',
+        ('Task_ClaimResolve','Task_Documents'):'T',
+        ('Task_Documents','Task_Invoice'):'T',
+        ('Task_Recalculate','Task_Offer'):'B',
+    }
+    tside=target_ports.get((a,b))
+    if tside is None:
+        tside='B' if flow['loop'] and NODES[b]['kind']=='exclusiveGateway' else (
+            'T' if gateway_branch and NODES[b]['kind']=='task' and B[1]>A[1]
+            or (not flow['loop'] and NODES[b]['kind']=='endEvent'
+                and B[1]>A[1]+A[3]
+                and abs((A[0]+A[2]/2)-(B[0]+B[2]/2))<10)
+            else 'L')
     start,end=port(A,sside),port(B,tside)
     delta={'R':(20,0),'L':(-20,0),'T':(0,-20),'B':(0,20)}
     # Keep the port selected for each XOR branch. Rewriting it to the bottom
@@ -230,53 +216,66 @@ def route(flow, boxes, width, height, occupied):
         # Rejection stays below the accepted route and enters its task from left.
         return fixed([start,s,(s[0],t[1]),t,end])
     if a=='Task_Load' and b=='Task_Monitor':
-        # Move from the loading lane into monitoring from above, clear of the
-        # long delivery-proof feedback line routed along the left margin.
-        return fixed([start,s,(s[0],t[1]),t,end])
+        # Leave the loading task to the right, rise in the inter-stage gap and
+        # enter monitoring from the left. The incident-resolution return uses
+        # the separate top port of the monitoring task.
+        return fixed([start,s,(t[0],s[1]),t,end])
+    if a=='Task_Deliver' and b=='Task_Proof':
+        # Delivery and its proof are stacked in the driver lane; the handoff
+        # is a short vertical sequence rather than a lateral detour.
+        return fixed([start,s,t,end])
     if a=='Task_Documents' and b=='Task_Invoice':
         # Billing is below the documents task. Enter from its top, leaving its
         # right port for the subsequent payment-control task.
         return fixed([start,s,(t[0],s[1]),t,end])
+    if a=='Gateway_Assigned' and b=='Task_Route' and flow['label']=='Да':
+        # The accepted resource branch descends in the gap before the route
+        # task and enters its left edge with one clean right-angle turn.
+        return fixed([start,s,(t[0],s[1]),t,end])
+    if a=='Gateway_Assigned' and b=='Task_Alternative' and flow['label']=='Нет':
+        # The alternate-resource task sits directly beneath assignment. The
+        # rejection branch passes below the assignment task and enters from
+        # the right, leaving a short vertical retry back into assignment.
+        assign=boxes['Task_Assign']
+        corridor_y=assign[1]+assign[3]+20
+        return fixed([start,s,(s[0],corridor_y),(t[0],corridor_y),
+                      (t[0],t[1]),t,end])
+    if a=='Task_Alternative' and b=='Task_Assign' and flow['loop']:
+        # A direct upward return connects the two stacked resource tasks.
+        return fixed([start,s,t,end])
     if a=='Gateway_Incident' and b=='Task_Incident' and flow['label']=='Да':
-        # Keep the incident branch above the normal-delivery branch and enter
-        # the incident task from its top edge, clear of its outgoing flow.
-        task_right=B[0]+B[2]
-        return fixed([start,s,(task_right+40,s[1]),
-                      (task_right+40,t[1]),(t[0],t[1]),end])
+        # Yes enters the incident task from the left through the free column
+        # gap; it no longer detours past the task and doubles back over it.
+        return fixed([start,s,(t[0],s[1]),t,end])
     if a=='Gateway_Incident' and b=='Task_Deliver' and flow['label']=='Нет':
-        # The no-deviation branch drops just left of delivery, then enters from
-        # the left; the incident branch uses a separate gateway exit above.
-        corridor_x=B[0]-40
-        return fixed([start,s,(corridor_x,s[1]),
-                      (corridor_x,t[1]),t,end])
+        # The normal route drops from the gateway in its own vertical corridor,
+        # then turns right into delivery; it is separate from the incident arm.
+        return fixed([start,s,(s[0],t[1]),t,end])
     if a=='Task_Ask' and b=='Task_Clarify':
-        # Use a dedicated upper-right corridor. Leaving from the task's right
-        # edge avoids the transport-check row; keeping the vertical leg above
-        # that row also prevents a long shared wall through the full pool.
-        bypass_x=max(x+w for id,(x,y,w,h) in boxes.items()
-                     if NODES[id]['phase']==0)+(360 if 'Task_Check' in boxes else 80)
-        return fixed([start,s,(bypass_x,s[1]),(bypass_x,t[1]),t,end])
+        # Clarification is reached through its bottom port; the return to
+        # registration leaves from its left, so the two arrows do not overlap.
+        return fixed([start,s,(t[0],s[1]),t,end])
     if a=='Task_Clarify' and b=='Task_Register':
-        # The completed request returns from the right and reaches registration
-        # from above. Its upper corridor is separate from the request-out route.
-        bypass_x=max(x+w for id,(x,y,w,h) in boxes.items()
-                     if NODES[id]['phase']==0)+40
-        # Stay above the gateway title as well as its branch lines.
-        corridor_y=boxes['Gateway_Complete'][1]-40
-        return fixed([start,s,(bypass_x,s[1]),(bypass_x,corridor_y),
-                      (t[0],corridor_y),t,end])
+        # Return from clarification along the open client-lane row, then drop
+        # to the registration task from above, separate from its gateway exit.
+        return fixed([start,s,(t[0],s[1]),(t[0],t[1]),t,end])
     if a=='Task_Proof' and b=='Gateway_Claim':
-        # Go below the incident loop and around the outer-right edge, then
-        # approach the claim decision from above. The no-claim path now exits
-        # directly to Documents, so the two routes stay in separate corridors.
-        outer_x=max(x+w for x,y,w,h in boxes.values())+40
-        clear_y=max(y+h for x,y,w,h in boxes.values())+40
-        upper_y=B[1]-50
+        # This long cross-lane handoff goes just below the incident loop, then
+        # rises in the dedicated inter-stage corridor. It avoids both the
+        # monitoring return and every task rather than wrapping the whole pool.
+        resolved=boxes['Gateway_Resolved']
+        proof=boxes['Task_Proof']
+        continuation=boxes['Task_Continue']
+        clear_y=max(resolved[1]+resolved[3],
+                    proof[1]+proof[3],
+                    continuation[1]+continuation[3])+40
+        outer_x=resolved[0]+resolved[2]+90
+        assert outer_x < B[0]-20, (outer_x,B[0])
         return fixed([start,s,(s[0],clear_y),(outer_x,clear_y),
-                      (outer_x,upper_y),(t[0],upper_y),t,end])
+                      (outer_x,t[1]),t,end])
     if a=='Gateway_Claim' and b=='Task_Documents' and flow['label']=='Нет':
-        # No bypasses claim handling down the clear column under the gateway and
-        # enters Documents from the left, not through the billing route.
+        # No descends in a dedicated column left of the claim tasks and enters
+        # Documents from the left edge.
         return fixed([start,s,(s[0],t[1]),t,end])
     if a=='Gateway_Claim' and b=='Task_Claim' and flow['label']=='Да':
         # Yes takes the right-hand side and enters claim registration from top.
@@ -288,41 +287,37 @@ def route(flow, boxes, width, height, occupied):
         # this incoming flow separate from the document task's right-side exit.
         return fixed([start,s,t,end])
     if a=='Task_Resolve' and b=='Task_Continue':
-        # Enter Continue from above, leaving its right side for the next step.
+        # Enter Continue from the left; its right side stays free for the
+        # following question about whether the deviation was resolved.
         return fixed([start,s,(t[0],s[1]),t,end])
     if a=='Task_Continue' and b=='Gateway_Resolved':
-        # Approach the question from below. The path first drops left of the
-        # diamond, then passes under it and enters only through the bottom port.
-        lower_y=B[1]+B[3]+40
-        outer_x=B[0]+B[2]+20
-        return fixed([start,s,(s[0],lower_y),(outer_x,lower_y),
-                      (outer_x,t[1]),t,end])
+        # The continuation task and its question are adjacent in one lane.
+        # Keep this handoff on a short horizontal line.
+        return fixed([start,s,(t[0],s[1]),t,end])
     if a=='Gateway_Resolved' and b=='Task_Resolve' and flow['label']=='Нет':
-        # No leaves left into the free corridor between the gateway and
-        # Continue, then returns to the resolution task from its right side.
-        outer_x=boxes['Task_Continue'][0]+boxes['Task_Continue'][2]+40
-        return fixed([start,s,(outer_x,s[1]),
-                      (outer_x,t[1]),t,end])
+        # The continuation task and its Yes-return occupy the upper/right
+        # corridor. No drops below them, then approaches Resolve from above;
+        # the outgoing retry uses the task's right port and its own corridor.
+        continuation=boxes['Task_Continue']
+        lower_y=max(A[1]+A[3],continuation[1]+continuation[3])+20
+        return fixed([start,s,(s[0],lower_y),(t[0],lower_y),
+                      (t[0],t[1]),t,end])
     if a=='Gateway_Resolved' and b=='Task_Monitor' and flow['label']=='Да':
-        # Once resolved, return to monitoring from above; the alternative answer
-        # exits left and returns to incident resolution through a separate port.
-        outer_x=A[0]+A[2]+40
-        upper_y=max(70,boxes['Task_Monitor'][1]-120)
-        return fixed([start,s,(outer_x,s[1]),(outer_x,upper_y),
-                      (t[0],upper_y),t,end])
+        # Return above the incident sequence and enter Monitor from its top.
+        # The load-to-monitor handoff uses the left port, so the two inputs
+        # remain visually distinct.
+        upper_y=boxes['Task_Monitor'][1]-40
+        return fixed([start,s,(s[0],upper_y),(t[0],upper_y),t,end])
+    if a=='Gateway_Revise' and b=='Task_Recalculate' and flow['label']=='Да':
+        # The recalculation task sits near Offer. Drop below the client row,
+        # then return left in the open logistics lane and enter from the right.
+        return fixed([start,s,(s[0],t[1]),t,end])
     if a=='Task_Recalculate' and b=='Task_Offer':
-        # Route below the current stage's tasks and enter the offer from above,
-        # keeping the retry distinct from the outgoing offer-to-client flow.
-        corridor_y=max(y+h for id,(x,y,w,h) in boxes.items()
-                       if NODES[id]['phase']==2)+30
-        return fixed([start,s,(s[0],corridor_y),(t[0],corridor_y),t,end])
-    if a=='Task_Alternative' and b=='Task_Assign' and 'Task_Route' in boxes:
-        # Return to assignment around the left edge of the transport lane;
-        # the former right-side detour crossed the accepted route to pickup.
-        corridor_y=max(y+h for x,y,w,h in boxes.values())+40
-        bypass_x=B[0]-20
-        return fixed([start,s,(bypass_x,s[1]),(bypass_x,corridor_y),
-                      (end[0],corridor_y),t,end])
+        # Recalculation returns below Offer through its bottom port, clear of
+        # the outgoing Offer-to-Approve route above it.
+        corridor_y=B[1]+B[3]+20
+        return fixed([start,s,(s[0],corridor_y),
+                      (t[0],corridor_y),t,end])
     # Search on a 10px orthogonal grid. All coordinates and task centers align.
     blocked=set()
     for id,(x,y,w,h) in boxes.items():
@@ -353,11 +348,68 @@ def route(flow, boxes, width, height, occupied):
     chain.append(s); chain.reverse(); occupied.update(chain)
     return simplify([start]+chain+[end])
 
+def validate_geometry(paths, selected, boxes):
+    """Reject routes that cross non-endpoint shapes or other sequence flows."""
+    routed=[f for f in FLOWS if f['id'] in paths]
+
+    def obstacles(id, box):
+        x,y,w,h=box
+        left,right=x-10,x+w+10
+        top=y-10; bottom=y+h+10
+        if NODES[id]['kind']=='exclusiveGateway': top=y-35
+        if NODES[id]['kind'].endswith('Event'): bottom=y+h+35
+        if id=='Gateway_Incident': right=x+w+190
+        return left,top,right,bottom
+
+    def hits_shape(p,q,rect):
+        left,top,right,bottom=rect
+        if p[0]==q[0]:
+            return left<p[0]<right and max(min(p[1],q[1]),top)<min(max(p[1],q[1]),bottom)
+        return top<p[1]<bottom and max(min(p[0],q[0]),left)<min(max(p[0],q[0]),right)
+
+    for f in routed:
+        points=paths[f['id']]
+        if any(x!=X and y!=Y for (x,y),(X,Y) in zip(points,points[1:])):
+            raise RuntimeError(f"Diagonal sequence flow: {f['id']}")
+        for p,q in zip(points,points[1:]):
+            for id,box in boxes.items():
+                if id not in (f['a'],f['b']) and hits_shape(p,q,obstacles(id,box)):
+                    raise RuntimeError(f"{f['id']} crosses the shape or label of {id}")
+
+    def endpoint(path):
+        return {path[0],path[-1]}
+
+    def is_shared_node_endpoint(f,g,p):
+        return bool({f['a'],f['b']} & {g['a'],g['b']}) and \
+            p in endpoint(paths[f['id']]) and p in endpoint(paths[g['id']])
+
+    for i,f in enumerate(routed):
+        for g in routed[i+1:]:
+            for a,b in zip(paths[f['id']],paths[f['id']][1:]):
+                for c,d in zip(paths[g['id']],paths[g['id']][1:]):
+                    point=None; overlap=False
+                    if a[0]==b[0] and c[1]==d[1]:
+                        x,y=a[0],c[1]
+                        if min(c[0],d[0])<=x<=max(c[0],d[0]) and min(a[1],b[1])<=y<=max(a[1],b[1]): point=(x,y)
+                    elif a[1]==b[1] and c[0]==d[0]:
+                        x,y=c[0],a[1]
+                        if min(a[0],b[0])<=x<=max(a[0],b[0]) and min(c[1],d[1])<=y<=max(c[1],d[1]): point=(x,y)
+                    elif a[0]==b[0]==c[0]==d[0]:
+                        lo=max(min(a[1],b[1]),min(c[1],d[1])); hi=min(max(a[1],b[1]),max(c[1],d[1]))
+                        overlap=hi>lo
+                    elif a[1]==b[1]==c[1]==d[1]:
+                        lo=max(min(a[0],b[0]),min(c[0],d[0])); hi=min(max(a[0],b[0]),max(c[0],d[0]))
+                        overlap=hi>lo
+                    if overlap or (point is not None and not is_shared_node_endpoint(f,g,point)):
+                        raise RuntimeError(f"Sequence flows {f['id']} and {g['id']} cross or overlap")
+    return {'crossing_free':True,'obstacle_free':True}
+
 def draw(phases, filename, compact=False):
     selected, lanes, boxes, width,height=layout(phases,compact)
     paths={}; occupied=set()
     for f in sorted(FLOWS,key=lambda f:f['loop']):
         if f['a'] in selected and f['b'] in selected: paths[f['id']]=route(f,boxes,width,height,occupied)
+    validate_geometry(paths,selected,boxes)
     title=TITLES[phases[0]] if len(phases)==1 else 'Обработка заказа на перевозку'
     svg=[f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="{escape(title)}">', '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#355f50"/></marker></defs>',f'<rect width="{width}" height="{height}" fill="white"/>',f'<text x="20" y="32" font-family="Arial" font-size="22" font-weight="bold" fill="#173d31">BPMN 2.0 · {escape(title)}</text>']
     lane_height=260 if compact else 360
@@ -517,6 +569,8 @@ def main():
     for i in range(6): draw([i],f'order-process-report-{i+1}.svg',True)
     draw([0,1,2],'order-process-part-1.svg'); draw([3,4,5],'order-process-part-2.svg')
     results['orthogonal_flows']=True
+    results['crossing_free']=True
+    results['obstacle_free']=True
     results['distinct_gateway_ports']=gateway_ports
     (HERE/'validation.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(results,ensure_ascii=False))
